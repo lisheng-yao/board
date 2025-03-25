@@ -108,10 +108,11 @@
                 const link = document.createElement("a");
                 link.href = "/announcements/download/" + att.id;
                 link.textContent = att.fileName;
+                link.setAttribute("download", att.fileName); // ✅ 加上 download 屬性
                 link.classList.add("me-3", "text-decoration-none");
 
                 const delBtn = document.createElement("button");
-                delBtn.type = "button"; //  防止觸發 form submit
+                delBtn.type = "button";
                 delBtn.className = "btn btn-sm btn-outline-danger";
                 delBtn.textContent = "刪除";
                 delBtn.onclick = function () {
@@ -120,7 +121,7 @@
                       method: "DELETE",
                     }).then((res) => {
                       if (res.ok) {
-                        loadAttachments(id); // 不 reload，只更新附件列表
+                        loadAttachments(id);
                       } else {
                         alert("刪除失敗");
                       }
@@ -154,7 +155,7 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        // ✅ 同步 CKEditor 資料
+        // 更新CKEDITOR
         for (const instance in CKEDITOR.instances) {
           CKEDITOR.instances[instance].updateElement();
         }
