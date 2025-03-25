@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface AnnouncementService {
     Page<Announcement> getAllPaged(Pageable pageable);
     List<Announcement> getAll();

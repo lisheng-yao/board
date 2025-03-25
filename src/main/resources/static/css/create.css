@@ -1,0 +1,27 @@
+/* create.css */
+
+/* 表單欄位在手機上排版優化 */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .col-sm-2,
+  .col-sm-10 {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .col-sm-2 {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  .text-end {
+    text-align: center !important;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
