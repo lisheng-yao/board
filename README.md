@@ -2,7 +2,11 @@
 
 這是一個以 Spring Boot 為後端、Bootstrap 5 為前端的公告管理系統。支援公告新增、編輯、刪除、附件上傳與下載等功能，並具備分頁功能與 JSON API。
 
-## 1.系統功能
+於CentOS 部屬網站：  https://top-yeti-gladly.ngrok-free.app/  
+
+(如有連線問題請來電來信告知，謝謝)
+
+## 📌 1.系統功能
 - 公告新增、修改、刪除
 
 - 公告列表支援分頁
@@ -17,7 +21,7 @@
 
 ---
 
-## 2.使用技術
+## 📌 2.使用技術
 
 | 類別       | 技術                        |
 |------------|-----------------------------|
@@ -30,7 +34,7 @@
 
 ---
 
-## 3.說明：
+## 📌 3.專案結構說明：
 controller/：負責路由、接收前端請求並調用 service。
 
 model/：包含公告、發佈者、附件的 Entity 與 DTO。
@@ -43,36 +47,57 @@ static/：HTML + JS 前端畫面，靜態放置於 Spring Boot 預設目錄。
 
 uploads/：使用者上傳的檔案將以 uploads/{announcementId}/ 儲存。
 
-## 4.公告相關 API
-| 方法     | 路徑                                      | 說明                     | 參數說明                          |
-|----------|-------------------------------------------|--------------------------|-----------------------------------|
-| GET      | /announcements/api/page                   | 取得公告分頁             | `page`、`size`（Query 參數）      |
-| GET      | /announcements/api/all                    | 取得所有公告             | 無                                |
-| GET      | /announcements/api/{id}                   | 取得完整公告資料         | `id`：公告 ID（Path 參數）        |
-| GET      | /announcements/api/simple/{id}            | 取得簡化公告資料（DTO）  | `id`：公告 ID（Path 參數）        |
-| POST     | /announcements/upload                     | 新增或更新公告（含附件） | 表單上傳（`multipart/form-data`） |
-| POST     | /announcements                             | 新增公告（JSON）         | `Announcement` JSON 物件          |
-| POST     | /announcements/update                      | 更新公告（JSON）         | `Announcement` JSON 物件          |
-| DELETE   | /announcements/delete/{id}                | 刪除公告                 | `id`：公告 ID（Path 參數）        |
+## 📌 4.相關 API
+| 方法     | 路徑                                      | 說明                     | 參數說明                             |
+|----------|-------------------------------------------|--------------------------|-------------------------------------|
+| GET      | /announcements/api/page                   | 取得公告分頁               | `page`、`size`（Query 參數）        |
+| GET      | /announcements/api/all                    | 取得所有公告               | 無                                  |
+| GET      | /announcements/api/{id}                   | 取得完整公告資料            | `id`：公告 ID（Path 參數）           |
+| GET      | /announcements/api/simple/{id}            | 取得簡化公告資料（DTO）     | `id`：公告 ID（Path 參數）           |
+| GET      | /announcements/download/{attachmentId}    | 下載附件                   | `attachmentId`：附件 ID（path 參數） |
+| DELETE   | /announcements/delete/{id}                | 刪除附件                   | `id`：附件 ID（path 參數）           |
+| POST     | /announcements/upload                     | 上傳公告及附件（新增或修改） | 使用 `multipart/form-data` 傳送：<br>- `id`（選填）<br>- `title`<br>- `startDate`<br>- `endDate`<br>- `content`<br>- `publisherId`<br>- `files`（可選，多檔） |
 
- ## 附件相關 API
- | 方法     | 路徑                                      | 說明           | 參數說明                       |
-|----------|-------------------------------------------|----------------|--------------------------------|
-| DELETE   | /announcements/attachment/{id}           | 刪除單一附件   | `id`：附件 ID（Path 參數）     |
-| GET      | /announcements/download/{id}             | 下載附件       | `id`：附件 ID（Path 參數）     |
 
-## /announcements/upload 表單欄位一覽
-| 欄位名稱      | 說明               | 是否必填 |
-|---------------|--------------------|----------|
-| id            | 公告 ID（編輯用）  | 否       |
-| title         | 公告標題           | ✅ 是     |
-| startDate     | 發布日期           | ✅ 是     |
-| endDate       | 截止日期           | ✅ 是     |
-| content       | 公告內容（HTML）   | ✅ 是     |
-| publisherId   | 發布者 ID          | ✅ 是     |
-| files         | 附件檔案（多筆）   | 否       |
 
-## 5.MySQL 資料表建置
+## 📌 5. 資料庫結構
+系統使用 MySQL，資料庫名稱：bulletin_board，共包含 3 張主要資料表：
+
+### 5-1 publisher（公告發佈者）
+| 欄位名稱     | 資料型別        | 說明                  |
+|--------------|------------------|-----------------------|
+| id           | INT (PK, AI)     | 主鍵，自動遞增        |
+| name         | VARCHAR(100)     | 發佈者名稱            |
+| email        | VARCHAR(100)     | 電子郵件              |
+| role         | VARCHAR(50)      | 使用者角色（如 admin）|
+| created_at   | TIMESTAMP        | 建立時間，預設當下時間 |
+
+### 5-2 announcement（公告事項）
+| 欄位名稱       | 資料型別        | 說明                            |
+|----------------|------------------|---------------------------------|
+| id             | INT (PK, AI)     | 主鍵，自動遞增                  |
+| title          | VARCHAR(255)     | 公告標題                        |
+| publisher_id   | INT (FK)         | 發佈者 ID，關聯 publisher.id     |
+| start_date     | DATE             | 公告開始日期                    |
+| end_date       | DATE             | 公告截止日期                    |
+| content        | TEXT             | 公告內容（HTML 格式）           |
+| created_at     | TIMESTAMP        | 建立時間                        |
+| updated_at     | TIMESTAMP        | 更新時間，自動更新              |
+
+🔗 一對多：一位發佈者可擁有多筆公告。
+
+### 5-3 announcement_attachment（公告附件）
+| 欄位名稱          | 資料型別        | 說明                                 |
+|-------------------|------------------|--------------------------------------|
+| id                | INT (PK, AI)     | 主鍵，自動遞增                       |
+| announcement_id   | INT (FK)         | 所屬公告 ID，關聯 announcement.id    |
+| file_name         | VARCHAR(255)     | 上傳時的原始檔案名稱                |
+| file_path         | VARCHAR(500)     | 檔案儲存路徑                         |
+| upload_time       | TIMESTAMP        | 上傳時間                             |
+
+🔗 一對多：一則公告可上傳多個附件。
+
+## 📌 6.MySQL 資料表建置
 
 ```sql
 CREATE DATABASE bulletin_board DEFAULT CHARSET=utf8mb4;
