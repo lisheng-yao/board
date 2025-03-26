@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
-    // 例如找出有效期間內的公告
+
 //    List<Announcement> findByStartDateBeforeAndEndDateAfter(java.time.LocalDate today1, java.time.LocalDate today2);
 }
 

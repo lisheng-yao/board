@@ -24,7 +24,7 @@ public class AnnouncementDTO {
         this.publisherName = publisherName;
     }
 
-    // Getter / Setter
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

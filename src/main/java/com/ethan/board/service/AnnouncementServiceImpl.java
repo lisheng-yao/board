@@ -68,14 +68,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                       String content, Integer publisherId, MultipartFile[] files) {
 
         Publisher publisher = publisherRepo.findById(publisherId)
-                .orElseThrow(() -> new IllegalArgumentException("❌ 無效的 publisher ID: " + publisherId));
+                .orElseThrow(() -> new IllegalArgumentException("無效的 publisher ID: " + publisherId));
 
         Announcement announcement;
 
         if (id != null) {
             announcement = announcementRepo.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("❌ 公告不存在，ID: " + id));
-            System.out.println("🔄 編輯公告 ID=" + id);
+                    .orElseThrow(() -> new IllegalArgumentException("公告不存在，ID: " + id));
+            System.out.println("編輯公告 ID=" + id);
             announcement.setTitle(title);
             announcement.setStartDate(startDate);
             announcement.setEndDate(endDate);
@@ -83,7 +83,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             announcement.setUpdatedAt(LocalDateTime.now());
         } else {
             announcement = new Announcement();
-            System.out.println("🆕 建立新公告");
+            System.out.println("建立新公告");
             announcement.setTitle(title);
             announcement.setStartDate(startDate);
             announcement.setEndDate(endDate);
@@ -95,23 +95,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         announcement.setPublisher(publisher);
         announcement = announcementRepo.save(announcement);
-        System.out.println("📌 儲存公告成功，ID=" + announcement.getId());
+        System.out.println("儲存公告成功，ID=" + announcement.getId());
 
         // 若沒有檔案可上傳則略過
         if (files == null || files.length == 0) {
-            System.out.println("📭 沒有附件，略過上傳");
+            System.out.println("沒有附件，略過上傳");
             return;
         }
 
         try {
-            // ✅ 跨平台安全路徑建立
+            // 跨平台路徑
             Path uploadPath = Paths.get(uploadBaseDir, announcement.getId().toString());
             Files.createDirectories(uploadPath);
-            System.out.println("📁 上傳路徑：" + uploadPath.toAbsolutePath());
+            System.out.println("上傳路徑：" + uploadPath.toAbsolutePath());
 
             for (MultipartFile file : files) {
                 if (file == null || file.isEmpty()) {
-                    System.out.println("⚠️ 空檔案略過");
+                    System.out.println("空檔案略過");
                     continue;
                 }
 
@@ -120,9 +120,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
                 try (InputStream in = file.getInputStream()) {
                     Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("✅ 檔案儲存完成：" + filePath);
+                    System.out.println("檔案儲存完成：" + filePath);
                 } catch (IOException e) {
-                    System.out.println("❌ 檔案儲存失敗：" + e.getMessage());
+                    System.out.println("檔案儲存失敗：" + e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -133,10 +133,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 attachment.setUploadTime(LocalDateTime.now());
 
                 attachmentRepo.save(attachment);
-                System.out.println("📦 附件已儲存進資料庫: " + fileName);
+                System.out.println("附件已儲存進資料庫: " + fileName);
             }
         } catch (IOException e) {
-            System.out.println("❌ 檔案儲存失敗：" + e.getMessage());
+            System.out.println("檔案儲存失敗：" + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -150,9 +150,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         try {
             Path path = Paths.get(attachment.getFilePath());
             Files.deleteIfExists(path);
-            System.out.println("🗑️ 附件檔案已刪除：" + path);
+            System.out.println("附件檔案已刪除：" + path);
         } catch (IOException e) {
-            System.out.println("⚠️ 刪除檔案失敗：" + e.getMessage());
+            System.out.println("刪除檔案失敗：" + e.getMessage());
         }
 
         // 刪除資料庫紀錄
